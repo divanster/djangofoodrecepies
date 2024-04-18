@@ -1,10 +1,43 @@
-<!DOCTYPE html>
+{% extends "food/base.html" %}
+{% load static %}
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>This is just a test template</h1>
-</body>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    {% block body %}
+
+    {% for item in item_list  %}
+    <div class="row">
+        <div class="col-md-3 offset-md-2">
+            <img src="{{ item.item_image }}" height="150px" alt="{{ item.item_name }}">
+        </div>
+        <div class="col-md-4">
+            <h3>{{ item.item_name }}</h3>
+            <h5>{{ item.item_desc }}</h5>
+            <h6>${{ item.item_price }}</h6>
+        </div>
+        <div class="col-md-2">
+            <a href="{% url 'food:detail' item.id %}" class="btn btn-danger">Buy</a>
+
+        </div>
+    </div>
+    {% endfor %}
+
+    {% endblock %}
 </html>
+
+{#        <ul>#}
+{#            <li>#}
+{##}
+{#                <a href="{% url 'food:detail' item.id %}" > {{ item.id }} -- {{ item.item_name }} >><< {{ item.item_desc }} </a>#}
+{##}
+{#            </li>#}
+{#        </ul>#}
+{##}
+{#     {% endfor %}#}
+{##}
+{#    {% endblock %}#}
