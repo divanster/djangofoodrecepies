@@ -1,3 +1,9 @@
 body{
     background-color: aquamarine;
 }
+
+.small-profile-img {
+    width: 100px;
+    height: 100px;
+    /* Add more styling if needed */
+}
