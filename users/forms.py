@@ -1,12 +1,28 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+# from django.utils.translation import gettext as _
+#
+#
+# class RegisterForm(UserCreationForm):
+#     email = forms.EmailField()
+#
+#     class Meta:
+#         model = User
+#         fields = ['username', 'email', 'password1', 'password2']
+#         labels = {
+#             'username': _('Username'),
+#             'email': _('Email'),
+#             'password1': _('Password'),
+#             'password2': _('Confirm pass'),
+#         }
 
 
 class RegisterForm(UserCreationForm):
-    email = forms.EmailField()
-    
+    email = forms.EmailField(label='Email')
+    password1 = forms.CharField(label='Password')
+    password2 = forms.CharField(label='Confirm Password')
+
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
-            
