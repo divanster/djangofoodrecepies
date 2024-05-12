@@ -20,6 +20,9 @@ from users import views as user_views
 from django.contrib.auth import views as authentication_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.views import LoginView, LogoutView
+from django.views.generic import RedirectView
+
 
 #
 # from users.views import CustomLogoutView
@@ -32,6 +35,8 @@ urlpatterns = [
     path('logout/', authentication_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     # path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('profile/', user_views.profilepage, name='profile'),
+    path('', RedirectView.as_view(url='food/', permanent=False)),
+    # path('', LoginView.as_view(), name='root'),
 
 ]
 
