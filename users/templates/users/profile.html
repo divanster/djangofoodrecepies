@@ -6,15 +6,13 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <div class="user-info-container">
-                    <h1>{{ user.username }}</h1>
-                    <img width="100px" height="100px" src="{{ user.profile.image.url }}" class="img-fluid rounded-circle">
-                </div>
+                <h1>{{ profile_user.username }}</h1>
+                <img width="100px" height="100px" src="{{ profile_user.profile.image.url }}" class="img-fluid rounded-circle">
             </div>
             <div class="col-md-6">
                 <h2>My Foods:</h2>
                 <div class="food-container">
-                    {% for item in user.item_set.all %}
+                    {% for item in profile_user.item_set.all %}
                         <div class="food-item">
                             <h3>{{ item.item_name }}</h3>
                             <p>Description:{{ item.item_desc }}</p>

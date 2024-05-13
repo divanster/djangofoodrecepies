@@ -10,8 +10,10 @@
             <h1>{{ item.item_name }}</h1>
             <h2>{{ item.item_desc }}</h2>
             {% if user.is_authenticated %}
-                <a href="{% url 'food:delete_item' item.id %}">Delete</a>
-                <a href="{% url 'food:update_item' item.id %}">Update</a>
+                {% if item.user_name == user %}
+                    <a href="{% url 'food:delete_item' item.id %}">Delete</a>
+                    <a href="{% url 'food:update_item' item.id %}">Update</a>
+                {% endif %}
                 <form method="post" action="{% url 'food:submit_rating' pk=item.pk %}">
                     {% csrf_token %}
                     <input type="hidden" name="item_id" value="{{ item.id }}">

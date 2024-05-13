@@ -1,6 +1,7 @@
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse_lazy
 
@@ -26,8 +27,9 @@ def register(request):
 
 
 @login_required
-def profilepage(request):
-    return render(request, 'users/profile.html', {'user': request.user})
+def profilepage(request, username):
+    user = get_object_or_404(User, username=username)
+    return render(request, 'users/profile.html', {'profile_user': user})
 
 # class CustomLogoutView(LogoutView):
 #     def dispatch(self, request, *args, **kwargs):
