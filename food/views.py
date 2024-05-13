@@ -8,6 +8,8 @@ from django.urls import reverse
 from .forms import ItemForm
 from .models import Item, Rating
 from django.template import loader
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 
 
 class IndexClassView(ListView):
@@ -41,7 +43,7 @@ class FoodDetail(DetailView):
 
 class CreateItem(CreateView):
     model = Item
-    fields = ['item_name', 'item_desc', 'item_price', 'item_image']
+    fields = ['item_name', 'item_desc', 'item_image']
     template_name = 'food/item-form.html'
 
     def form_valid(self, form):
@@ -49,8 +51,35 @@ class CreateItem(CreateView):
         return super().form_valid(form)
 
 
+# def update_item(request, item_id):
+#     item = Item.objects.get(id=item_id)
+#     form = ItemForm(request.POST or None, instance=item)
+#
+#     if form.is_valid():
+#         form.save()
+#         return redirect("food:index")
+#
+#     return render(request, 'food/item-form.html', {'form': form, 'item_id': item_id})
+#
+#
+# def delete_item(request, item_id):
+#     item = Item.objects.get(id=item_id)
+#
+#     if request.method == 'POST':
+#         item.delete()
+#         return redirect("food:index")
+#
+#     return render(request, 'food/item-delete.html', {'item_id': item_id})
+
+
+@login_required
 def update_item(request, item_id):
     item = Item.objects.get(id=item_id)
+
+    # Check if the current user is the owner of the item
+    if request.user != item.user_name:
+        return HttpResponseForbidden("You are not authorized to update this item.")
+
     form = ItemForm(request.POST or None, instance=item)
 
     if form.is_valid():
@@ -60,15 +89,19 @@ def update_item(request, item_id):
     return render(request, 'food/item-form.html', {'form': form, 'item_id': item_id})
 
 
+@login_required
 def delete_item(request, item_id):
     item = Item.objects.get(id=item_id)
+
+    # Check if the current user is the owner of the item
+    if request.user != item.user_name:
+        return HttpResponseForbidden("You are not authorized to delete this item.")
 
     if request.method == 'POST':
         item.delete()
         return redirect("food:index")
 
     return render(request, 'food/item-delete.html', {'item_id': item_id})
-
 
 def submit_rating(request, pk):
     if request.method == 'POST':
@@ -81,3 +114,17 @@ def submit_rating(request, pk):
     else:
         # Handle other HTTP methods if needed
         return HttpResponseNotAllowed(['POST'])
+
+
+# def submit_rating(request, pk):
+#     if request.method == 'POST':
+#         item_id = request.POST.get('item_id')
+#         rating_value = request.POST.get('rating')
+#         item = get_object_or_404(Item, pk=item_id)
+#         # Create or update the rating
+#         Rating.objects.update_or_create(user=request.user, item=item, defaults={'value': rating_value})
+#         return redirect('food:detail', pk=pk)
+#     else:
+#         item = get_object_or_404(Item, pk=pk)
+#         item.increment_views()  # Call the increment_views method only for GET requests
+#         return render(request, 'food/detail.html', {'item': item})

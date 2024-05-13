@@ -17,8 +17,9 @@
                     {% for item in user.item_set.all %}
                         <div class="food-item">
                             <h3>{{ item.item_name }}</h3>
-                            <p>{{ item.item_desc }}</p>
-                            <p>Price: ${{ item.item_price }}</p>
+                            <p>Description:{{ item.item_desc }}</p>
+                            <p>Rating:{{ item.average_rating }}</p>
+                            <p>Views:{{ item.views }}</p>
                             <!-- Add more details as needed -->
                         </div>
                     {% empty %}

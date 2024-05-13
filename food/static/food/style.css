@@ -20,7 +20,7 @@ body{
 .food-container {
     border: 1px solid #ccc;
     padding: 20px;
-    max-height: 300px; /* Limit the height */
+    max-height: 500px; /* Limit the height */
     overflow-y: auto; /* Add scroll if necessary */
 }
 

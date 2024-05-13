@@ -18,8 +18,9 @@
         <div class="col-md-4">
             <h3><a href="{{ item.get_absolute_url }}">{{ item.item_name }}</a></h3>
             <h5>{{ item.item_desc }}</h5>
-            <h6>${{ item.item_price }}</h6>
             <h6>Posted by {{ item.user_name }}</h6>
+            <p>Viewed {{ item.views }}</p>
+            <p>Average Rating: {{ item.average_rating }}</p>
         </div>
         <div class="col-md-2">
             <a href="{% url 'food:detail' item.id %}" class="btn btn-danger">Details</a>
