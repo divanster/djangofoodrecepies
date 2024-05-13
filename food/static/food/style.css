@@ -11,3 +11,25 @@ body{
 .form-group input {
     width: 100%;
 }
+.user-info-container {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.food-container {
+    border: 1px solid #ccc;
+    padding: 20px;
+    max-height: 300px; /* Limit the height */
+    overflow-y: auto; /* Add scroll if necessary */
+}
+
+.food-item {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+.food-item:last-child {
+    border-bottom: none; /* Remove border from last item */
+}

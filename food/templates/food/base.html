@@ -15,11 +15,13 @@
 
                     {% if user.is_authenticated %}
                         <a class="nav-item mx-2" href="{% url 'food:create_item' %}">Add Item</a>
-                        <a href="{% url 'logout' %}">Logout</a>
-                        <a href="{% url 'profile' %}">Profile</a>
+                        <a class="nav-item mx-2" href="{% url 'logout' %}">Logout</a>
+                        <a class="nav-item mx-2" href="{% url 'profile' %}">Profile</a>
+                        <a class="nav-item mx-2" href="{% url 'food:index' %}">FOOD</a>
                     {% else %}
-                        <a href="{% url 'login' %}">Login</a>
-                        <a href="{% url 'register' %}">Register</a>
+                        <a class="nav-item mx-2" href="{% url 'food:index' %}">FOOD</a>
+                        <a class="nav-item mx-2" href="{% url 'login' %}">Login</a>
+                        <a class="nav-item mx-2" href="{% url 'register' %}">Register</a>
 
                     {% endif %}
                 </div>
