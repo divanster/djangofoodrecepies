@@ -33,3 +33,19 @@ body{
 .food-item:last-child {
     border-bottom: none; /* Remove border from last item */
 }
+
+
+.item-row {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+.nav-item {
+        text-decoration: none; /* Remove underline */
+        color: #ffffff; /* Set text color to white */
+    }
+
+.nav-item:hover {
+        color: #ffcc00; /* Change text color on hover */
+    }
