@@ -1,11 +1,12 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
 from django.shortcuts import render, redirect, get_object_or_404, redirect
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView
+from django.urls import reverse
 
 from .forms import ItemForm
-from .models import Item
+from .models import Item, Rating
 from django.template import loader
 
 
@@ -68,3 +69,15 @@ def delete_item(request, item_id):
 
     return render(request, 'food/item-delete.html', {'item_id': item_id})
 
+
+def submit_rating(request, pk):
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+        rating_value = request.POST.get('rating')
+        item = get_object_or_404(Item, pk=item_id)
+        # Create or update the rating
+        Rating.objects.update_or_create(user=request.user, item=item, defaults={'value': rating_value})
+        return redirect('food:detail', pk=pk)
+    else:
+        # Handle other HTTP methods if needed
+        return HttpResponseNotAllowed(['POST'])

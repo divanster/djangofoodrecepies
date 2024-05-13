@@ -25,6 +25,12 @@ class Item(models.Model):
         self.views += 1
         self.save()
 
+    def average_rating(self):
+        ratings = Rating.objects.filter(item=self)
+        if ratings.exists():
+            return sum(r.value for r in ratings) / len(ratings)
+        return 0
+
 
 class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
