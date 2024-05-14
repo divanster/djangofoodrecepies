@@ -37,9 +37,9 @@
                     <div class="col-md-4">
                         <h3><a href="{{ item.get_absolute_url }}" style="text-decoration: none;">{{ item.item_name }}</a></h3>
                         <h5>{{ item.item_desc | safe}}</h5>
-                        <h6>Добавено от {{ item.user_name }}</h6>
-                        <p>Преглеждания {{ item.views }}</p>
-                        <p>Рейтинг: {{ item.average_rating }}</p>
+                        <h6>Добавено от: <a href="{% url 'profile' item.user_name %}">{{ item.user_name }}</a></h6>
+                        <p>Преглеждания: {{ item.views }}</p>
+                        <p>Рейтинг {{ item.average_rating }}</p>
                     </div>
                     <div class="col-md-2">
                         <a href="{% url 'food:detail' item.id %}" class="btn btn-danger">Преглед</a>

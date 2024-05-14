@@ -15,7 +15,7 @@
                     {% for item in profile_user.item_set.all %}
                         <div class="food-item">
                             <h3>{{ item.item_name }}</h3>
-                            <p>Description:{{ item.item_desc }}</p>
+                            <p>Description:{{ item.item_desc | safe}}</p>
                             <p>Rating:{{ item.average_rating }}</p>
                             <p>Views:{{ item.views }}</p>
                             <!-- Add more details as needed -->
