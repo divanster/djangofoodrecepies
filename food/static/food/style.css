@@ -2,6 +2,10 @@ body{
     background-color: aquamarine;
 }
 
+.no-underline {
+    text-decoration: none; /* Remove underline */
+}
+
 .small-profile-img {
     width: 100px;
     height: 100px;
@@ -35,12 +39,6 @@ body{
 }
 
 
-.item-row {
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
 .nav-item {
         text-decoration: none; /* Remove underline */
         color: #ffffff; /* Set text color to white */
@@ -49,3 +47,14 @@ body{
 .nav-item:hover {
         color: #ffcc00; /* Change text color on hover */
     }
+
+
+.item-row {
+            margin-bottom: 20px; /* Add margin-bottom to create separation between item rows */
+            border-bottom: 1px solid #ccc;
+        }
+
+
+.item-name a {
+    text-decoration: none;
+}

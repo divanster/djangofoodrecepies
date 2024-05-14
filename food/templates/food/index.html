@@ -7,24 +7,27 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <style>
-        .item-row {
-            margin-bottom: 20px; /* Add margin-bottom to create separation between item rows */
-            border-bottom: 1px solid #ccc;
-        }
-    </style>
+
 </head>
 <body>
 {% block body %}
     <div class="container">
+    {% if user.is_authenticated %}
         <form method="GET" action="{% url 'food:index' %}">
-            <label for="sort_by">Sort by:</label>
+            <label for="sort_by">Подреди по:</label>
             <select name="sort_by" id="sort_by">
-                <option value="rating">Rating</option>
-                <option value="views">Views</option>
+                <option value="rating">Рейтинг:</option>
+                <option value="views">Преглеждания:</option>
             </select>
             <button type="submit">Sort</button>
         </form>
+    {% else %}
+        <p>
+            Ако искате да добавите рецепта моля:
+            <a href="{% url 'login' %}">Login</a> или
+            <a href="{% url 'register' %}">Register</a>
+        </p>
+    {% endif %}
         {% for item in item_list  %}
             <div class="item-row">
                 <div class="row">
@@ -32,14 +35,14 @@
                         <img src="{{ item.item_image }}" height="150px" alt="{{ item.item_name }}">
                     </div>
                     <div class="col-md-4">
-                        <h3><a href="{{ item.get_absolute_url }}">{{ item.item_name }}</a></h3>
-                        <h5>{{ item.item_desc }}</h5>
-                        <h6>Posted by {{ item.user_name }}</h6>
-                        <p>Viewed {{ item.views }}</p>
-                        <p>Average Rating: {{ item.average_rating }}</p>
+                        <h3><a href="{{ item.get_absolute_url }}" style="text-decoration: none;">{{ item.item_name }}</a></h3>
+                        <h5>{{ item.item_desc | safe}}</h5>
+                        <h6>Добавено от {{ item.user_name }}</h6>
+                        <p>Преглеждания {{ item.views }}</p>
+                        <p>Рейтинг: {{ item.average_rating }}</p>
                     </div>
                     <div class="col-md-2">
-                        <a href="{% url 'food:detail' item.id %}" class="btn btn-danger">Details</a>
+                        <a href="{% url 'food:detail' item.id %}" class="btn btn-danger">Преглед</a>
                     </div>
                 </div>
             </div>

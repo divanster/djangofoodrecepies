@@ -31,15 +31,6 @@ def item(request):
     return HttpResponse("This is an item view")
 
 
-def detail(request, item_id):
-    item = Item.objects.get(pk=item_id)
-    context = {
-        'item': item,
-    }
-
-    return render(request, 'food/detail.html', context)
-
-
 class FoodDetail(DetailView):
     model = Item
     template_name = 'food/detail.html'
@@ -50,16 +41,6 @@ class FoodDetail(DetailView):
         return obj
 
 
-# class CreateItem(CreateView):
-#     model = Item
-#     fields = ['item_name', 'item_desc', 'item_image']
-#     template_name = 'food/item-form.html'
-#
-#     def form_valid(self, form):
-#         form.instance.user_name = self.request.user
-#         return super().form_valid(form)
-
-
 class CreateItem(CreateView):
     model = Item
     form_class = ItemForm
@@ -68,7 +49,6 @@ class CreateItem(CreateView):
     def form_valid(self, form):
         form.instance.user_name = self.request.user
         return super().form_valid(form)
-
 
 
 @login_required
@@ -115,15 +95,10 @@ def submit_rating(request, pk):
         # Handle other HTTP methods if needed
         return HttpResponseNotAllowed(['POST'])
 
-# def submit_rating(request, pk):
-#     if request.method == 'POST':
-#         item_id = request.POST.get('item_id')
-#         rating_value = request.POST.get('rating')
-#         item = get_object_or_404(Item, pk=item_id)
-#         # Create or update the rating
-#         Rating.objects.update_or_create(user=request.user, item=item, defaults={'value': rating_value})
-#         return redirect('food:detail', pk=pk)
-#     else:
-#         item = get_object_or_404(Item, pk=pk)
-#         item.increment_views()  # Call the increment_views method only for GET requests
-#         return render(request, 'food/detail.html', {'item': item})
+
+def handler404(request, exception):
+    return render(request, 'food/404.html', status=404)
+
+
+def handler500(request):
+    return render(request, 'food/500.html', status=500)

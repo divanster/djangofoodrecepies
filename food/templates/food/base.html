@@ -17,12 +17,12 @@
 
                   <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                     {% if user.is_authenticated %}
-                        <a class="nav-item mx-2" href="{% url 'food:index' %}">Recepies</a>
-                        <a class="nav-item mx-2" href="{% url 'food:create_item' %}">Add Recipe </a>
-                        <a class="nav-item mx-2" href="{% url 'profile' request.user.username %}">Profile</a>
+                        <a class="nav-item mx-2" href="{% url 'food:index' %}">Рецепти</a>
+                        <a class="nav-item mx-2" href="{% url 'food:create_item' %}">Добави рецепта </a>
+                        <a class="nav-item mx-2" href="{% url 'profile' request.user.username %}">Профил</a>
                         <a class="nav-item mx-2 btn btn-danger" href="{% url 'logout' %}">Logout</a>
                     {% else %}
-                        <a class="nav-item mx-2" href="{% url 'food:index' %}">FOOD</a>
+                        <a class="nav-item mx-2" href="{% url 'food:index' %}">Рецепти</a>
                         <a class="nav-item mx-2 btn btn-primary" href="{% url 'login' %}">Login</a>
                         <a class="nav-item mx-2 btn btn-success" href="{% url 'register' %}">Register</a>
                     {% endif %}
