@@ -1,10 +1,22 @@
+from django.forms import ModelForm
+from ckeditor.widgets import CKEditorWidget
+
 from django.contrib import admin
 from .models import Item, Rating
 
-admin.site.register(Item)
-admin.site.register(Rating)
+
+class ItemAdminForm(ModelForm):
+    class Meta:
+        model = Item
+        fields = '__all__'
+        widgets = {
+            'item_desc': CKEditorWidget(),  # Use CKEditorWidget for the item_desc field
+        }
 
 
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ['item_name', 'item_desc', 'user_name', 'views']  # Display these fields in the admin panel
-    list_filter = ['user_name', 'views']  # Add filters for these fields
+    form = ItemAdminForm
+
+
+admin.site.register(Item, ItemAdmin)
+admin.site.register(Rating)
