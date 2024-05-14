@@ -17,6 +17,15 @@ class IndexClassView(ListView):
     template_name = 'food/index.html'
     context_object_name = 'item_list'
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        sort_by = self.request.GET.get('sort_by', 'rating')  # Default to sorting by rating
+        if sort_by == 'rating':
+            queryset = sorted(queryset, key=lambda x: x.average_rating(), reverse=True)
+        elif sort_by == 'views':
+            queryset = queryset.order_by('-views')
+        return queryset
+
 
 def item(request):
     return HttpResponse("This is an item view")
@@ -103,6 +112,7 @@ def delete_item(request, item_id):
 
     return render(request, 'food/item-delete.html', {'item_id': item_id})
 
+
 def submit_rating(request, pk):
     if request.method == 'POST':
         item_id = request.POST.get('item_id')
@@ -114,7 +124,6 @@ def submit_rating(request, pk):
     else:
         # Handle other HTTP methods if needed
         return HttpResponseNotAllowed(['POST'])
-
 
 # def submit_rating(request, pk):
 #     if request.method == 'POST':

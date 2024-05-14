@@ -17,6 +17,14 @@
 <body>
 {% block body %}
     <div class="container">
+        <form method="GET" action="{% url 'food:index' %}">
+            <label for="sort_by">Sort by:</label>
+            <select name="sort_by" id="sort_by">
+                <option value="rating">Rating</option>
+                <option value="views">Views</option>
+            </select>
+            <button type="submit">Sort</button>
+        </form>
         {% for item in item_list  %}
             <div class="item-row">
                 <div class="row">
