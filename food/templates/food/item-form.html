@@ -1,4 +1,12 @@
 {% extends 'food/base.html' %}
+{% load static %}
+{% block extra_head %}
+    <!-- Include CKEditor from CDN -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.0/classic/ckeditor.js"></script>
+    <!-- Include your CKEditor configuration file -->
+{#    <script src="{% static 'ckeditor.js' %}"></script>#}
+{% endblock %}
+
 
 {% block body %}
 <div class="container">
@@ -7,18 +15,14 @@
             <div class="card bg-light">
                 <div class="card-header text-white bg-info">
                     <div class="card-title">
-                        Register
+                        Добавяне на рецепта
                     </div>
                 </div>
                 <div class="card-body">
                     <form method="POST">
                         {% csrf_token %}
-                        {% for field in form.visible_fields %}
-                        <div class="form-group">
-                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field }}
-                        </div>
-                        {% endfor %}
+                        {{ form.media }}
+                        {{ form.as_p }}
                         <button type="submit" class="btn btn-primary">Save</button>
                     </form>
                 </div>

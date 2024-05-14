@@ -10,7 +10,7 @@ class Item(models.Model):
 
     user_name = models.ForeignKey(User, on_delete=models.CASCADE, default='1')
     item_name = models.CharField(max_length=200)
-    item_desc = models.CharField(max_length=200)
+    item_desc = models.TextField(max_length=4000)
     item_image = models.CharField(max_length=500,
                                   default='https://media.istockphoto.com/id/1426890025/es/foto/la-pizza-de-la-que-te'
                                           '-olvidaste-durante-una-semana-y-se-puso-mohosa.jpg?s=612x612&w=0&k=20&c'

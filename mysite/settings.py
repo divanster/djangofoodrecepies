@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'food.apps.FoodConfig',
     'users.apps.UsersConfig',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
