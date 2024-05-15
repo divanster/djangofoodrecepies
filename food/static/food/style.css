@@ -1,5 +1,5 @@
 body{
-    background-color: aquamarine;
+    background-color: #ffffff;
 }
 
 .no-underline {
@@ -58,18 +58,18 @@ body{
 .item-name a {
     text-decoration: none;
 }
-
-
-.rating {
-    font-size: 24px;
+.star-ratings {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
 }
 
-.star {
+.star-ratings input {
+    display: none;
+}
+
+.star-ratings label {
+    font-size: 4rem;
+    color: #0022ff;
     cursor: pointer;
-    color: #ccc;
-}
-
-.star:hover,
-.star.active {
-    color: gold;
 }

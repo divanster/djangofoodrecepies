@@ -35,6 +35,9 @@ urlpatterns = [
     # path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('profile/<str:username>/', user_views.profilepage, name='profile'),
     path('', RedirectView.as_view(url='food/', permanent=False)),
+    path('ratings/', include('star_ratings.urls', namespace='ratings')),
+
+
     # path('', LoginView.as_view(), name='root'),
 
 ]

@@ -70,7 +70,7 @@ def update_item(request, item_id):
 
 @login_required
 def delete_item(request, item_id):
-    item = get_object_or_404(Item, id=item_id)  # Use get_object_or_404 for better error handling
+    item = Item.objects.get(id=item_id)
 
     # Check if the current user is the owner of the item
     if request.user != item.user_name:
@@ -80,10 +80,9 @@ def delete_item(request, item_id):
         item.delete()
         return redirect("food:index")
 
-    return render(request, 'food/item-delete.html', {'item': item})  # Pass 'item' instead of 'item_id'
+    return render(request, 'food/item-delete.html', {'item_id': item_id})
 
 
-@login_required
 def submit_rating(request, pk):
     if request.method == 'POST':
         item_id = request.POST.get('item_id')

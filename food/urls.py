@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 
@@ -18,6 +18,9 @@ urlpatterns = [
     path('delete/<int:item_id>/', views.delete_item, name='delete_item'),
     # rating
     path('<int:pk>/submit_rating/', views.submit_rating, name='submit_rating'),
+
+
+
     path('404/', views.handler404, name='error_404'),
     path('500/', views.handler500, name='error_500'),
 

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'food.apps.FoodConfig',
     'users.apps.UsersConfig',
     'ckeditor',
+    'star_ratings',
 ]
 
 MIDDLEWARE = [
