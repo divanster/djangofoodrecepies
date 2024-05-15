@@ -22,6 +22,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 
+
 #
 # from users.views import CustomLogoutView
 
@@ -42,3 +43,5 @@ urlpatterns += [
 
                ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+handler404 = 'food.views.handler404'
+handler500 = 'food.views.handler500'
