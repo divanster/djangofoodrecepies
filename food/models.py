@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from star_ratings.models import Rating
 
 
 class Item(models.Model):
@@ -24,11 +25,18 @@ class Item(models.Model):
         self.views += 1
         self.save()
 
-    def average_rating(self):
-        ratings = Rating.objects.filter(item=self)
+    def get_average_rating(self):
+        ratings = Rating.objects.filter(content_type__model='item', object_id=self.id)
         if ratings.exists():
-            return sum(r.value for r in ratings) / len(ratings)
+            return ratings.aggregate(models.Avg('average'))['average__avg']
         return 0
+
+    def get_rating_count(self):
+        return self.ratings.count
+
+    def get_user_rating(self, user):
+        user_rating = self.ratings.user_ratings.filter(user=user).first()
+        return user_rating.score if user_rating else None
 
 
 class Comment(models.Model):
@@ -39,15 +47,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.user} on {self.item}'
-
-
-class Rating(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ForeignKey('Item', on_delete=models.CASCADE)
-    value = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('user', 'item')
-
-    # item_image = models.ImageField(upload_to='') better for image storage with validation and upload function

@@ -1,5 +1,6 @@
 {% extends 'food/base.html' %}
 {% load static %}
+{% load ratings %}
 <link rel="stylesheet" type="text/css" href="{% static 'food/style.css' %}">
 
 {% block body %}
@@ -10,15 +11,22 @@
                 <img width="100px" height="100px" src="{{ profile_user.profile.image.url }}" class="img-fluid rounded-circle">
             </div>
             <div class="col-md-6">
-                <h2>My Foods:</h2>
+                <h2>Моите рецепти:</h2>
                 <div class="food-container">
-                    {% for item in profile_user.item_set.all %}
+                    {% for item in items %}
                         <div class="food-item">
                             <h3>{{ item.item_name }}</h3>
-                            <p>Description:{{ item.item_desc | safe}}</p>
-                            <p>Rating:{{ item.average_rating }}</p>
-                            <p>Views:{{ item.views }}</p>
-                            <!-- Add more details as needed -->
+                            <p>Description: {{ item.item_desc | safe }}</p>
+                            <div>
+                                <p>Rating:</p>
+                                {% ratings item %}
+                            </div>
+                            <p>Views: {{ item.views }}</p>
+                            <p>Average Rating: {{ item.average_rating|floatformat:2 }}</p>
+                            <p>Rating Count: {{ item.rating_count }}</p>
+                            {% if item.user_rating %}
+                                <p>You Rated: {{ item.user_rating }}</p>
+                            {% endif %}
                         </div>
                     {% empty %}
                         <p>No foods found.</p>

@@ -1,13 +1,14 @@
 {% extends "food/base.html" %}
 {% load static %}
+{% load ratings %}
+
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
+    <link rel="stylesheet" type="text/css" href="{% static 'food/style.css' %}">
 </head>
 <body>
 {% block body %}
@@ -28,7 +29,7 @@
             <a href="{% url 'register' %}">Register</a>
         </p>
     {% endif %}
-        {% for item in item_list  %}
+        {% for item in item_list %}
             <div class="item-row">
                 <div class="row">
                     <div class="col-md-3 offset-md-2">
@@ -36,10 +37,14 @@
                     </div>
                     <div class="col-md-4">
                         <h3><a href="{{ item.get_absolute_url }}" style="text-decoration: none;">{{ item.item_name }}</a></h3>
-                        <h5>{{ item.item_desc | safe}}</h5>
+                        <h5>{{ item.item_desc | safe }}</h5>
                         <h6>Добавено от: <a href="{% url 'profile' item.user_name %}">{{ item.user_name }}</a></h6>
                         <p>Преглеждания: {{ item.views }}</p>
-                        <p>Рейтинг {{ item.average_rating }}</p>
+                        <div>
+                            <p>Рейтинг:</p>
+                            {% ratings item %}
+                        </div>
+
                     </div>
                     <div class="col-md-2">
                         <a href="{% url 'food:detail' item.id %}" class="btn btn-danger">Преглед</a>

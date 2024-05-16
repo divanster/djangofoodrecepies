@@ -2,7 +2,7 @@ from django.forms import ModelForm
 from ckeditor.widgets import CKEditorWidget
 
 from django.contrib import admin
-from .models import Item, Rating
+from .models import Item
 
 
 class ItemAdminForm(ModelForm):
@@ -19,4 +19,3 @@ class ItemAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Item, ItemAdmin)
-admin.site.register(Rating)

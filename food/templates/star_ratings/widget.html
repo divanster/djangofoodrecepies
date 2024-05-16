@@ -1,0 +1,7 @@
+{% extends "star_ratings/widget_base.html" %}
+{% block rating_detail %}
+<div class="star-ratings-rating-average"><span class='star-ratings-rating-value'>Rating: {{ rating.average|floatformat:1 }}</span></div>
+
+<div>{{ rating.count }}</div>
+<div>{{ user_rating.score }}</div>
+{% endblock %}

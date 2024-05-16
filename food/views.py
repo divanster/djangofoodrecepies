@@ -1,12 +1,14 @@
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ItemForm, CommentForm
-from .models import Item, Rating, Comment
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from .models import Item, Comment
+from star_ratings.models import Rating
 
 
 class IndexClassView(ListView):
@@ -16,16 +18,12 @@ class IndexClassView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        sort_by = self.request.GET.get('sort_by', 'rating')  # Default to sorting by rating
+        sort_by = self.request.GET.get('sort_by', 'rating')
         if sort_by == 'rating':
-            queryset = sorted(queryset, key=lambda x: x.average_rating(), reverse=True)
+            queryset = sorted(queryset, key=lambda x: x.get_average_rating(), reverse=True)
         elif sort_by == 'views':
             queryset = queryset.order_by('-views')
         return queryset
-
-
-def item(request):
-    return HttpResponse("This is an item view")
 
 
 class FoodDetail(DetailView):
@@ -37,76 +35,59 @@ class FoodDetail(DetailView):
         obj.increment_views()
         return obj
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentForm()
+        return context
 
-class CreateItem(CreateView):
+
+class CreateItem(LoginRequiredMixin, CreateView):
     model = Item
     form_class = ItemForm
     template_name = 'food/item-form.html'
+    success_url = reverse_lazy('food:index')
 
     def form_valid(self, form):
         form.instance.user_name = self.request.user
         return super().form_valid(form)
 
 
-@login_required
-def update_item(request, item_id):
-    item = Item.objects.get(id=item_id)
+class UpdateItem(LoginRequiredMixin, UpdateView):
+    model = Item
+    form_class = ItemForm
+    template_name = 'food/item-form.html'
+    success_url = reverse_lazy('food:index')
 
-    # Check if the current user is the owner of the item
-    if request.user != item.user_name:
-        return HttpResponseForbidden("You are not authorized to update this item.")
-
-    form = ItemForm(request.POST or None, instance=item)
-
-    if form.is_valid():
-        form.save()
-        return redirect("food:index")
-
-    return render(request, 'food/item-form.html', {'form': form, 'item_id': item_id})
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.user_name != self.request.user:
+            raise HttpResponseForbidden("You are not authorized to update this item.")
+        return obj
 
 
-@login_required
-def delete_item(request, item_id):
-    item = Item.objects.get(id=item_id)
+class DeleteItem(LoginRequiredMixin, DeleteView):
+    model = Item
+    template_name = 'food/item-delete.html'
+    success_url = reverse_lazy('food:index')
 
-    # Check if the current user is the owner of the item
-    if request.user != item.user_name:
-        return HttpResponseForbidden("You are not authorized to delete this item.")
-
-    if request.method == 'POST':
-        item.delete()
-        return redirect("food:index")
-
-    return render(request, 'food/item-delete.html', {'item_id': item_id})
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.user_name != self.request.user:
+            raise HttpResponseForbidden("You are not authorized to delete this item.")
+        return obj
 
 
-def submit_rating(request, pk):
-    if request.method == 'POST':
-        item_id = request.POST.get('item_id')
-        rating_value = request.POST.get('rating')
-        item = get_object_or_404(Item, pk=item_id)
-        # Create or update the rating
-        Rating.objects.update_or_create(user=request.user, item=item, defaults={'value': rating_value})
-        return redirect('food:detail', pk=pk)
-    else:
-        # Handle other HTTP methods if needed
-        return HttpResponseNotAllowed(['POST'])
+class AddComment(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
 
+    def form_valid(self, form):
+        form.instance.item = get_object_or_404(Item, pk=self.kwargs['pk'])
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
-@login_required
-def add_comment(request, pk):
-    item = get_object_or_404(Item, pk=pk)
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.item = item
-            comment.user = request.user
-            comment.save()
-            return redirect('food:detail', pk=pk)
-    else:
-        form = CommentForm()
-    return render(request, 'food/detail.html', {'item': item, 'comment_form': form})
+    def get_success_url(self):
+        return reverse_lazy('food:detail', kwargs={'pk': self.kwargs['pk']})
 
 
 @login_required
@@ -118,6 +99,17 @@ def delete_comment(request, item_pk, comment_pk):
     else:
         return HttpResponseForbidden("You are not authorized to delete this comment.")
 
+
+def submit_rating(request, pk):
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+        rating_value = request.POST.get('rating')
+        item = get_object_or_404(Item, pk=item_id)
+        # Create or update the rating
+        Rating.objects.update_or_create(user=request.user, content_object=item, defaults={'score': rating_value})
+        return redirect('food:detail', pk=pk)
+    else:
+        return HttpResponseNotAllowed(['POST'])
 
 
 def handler404(request, exception):
