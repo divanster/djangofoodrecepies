@@ -1,13 +1,10 @@
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
-from django.shortcuts import render, redirect, get_object_or_404, redirect
+from django.http import HttpResponse, HttpResponseNotAllowed
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView
-from django.urls import reverse
-
-from .forms import ItemForm
-from .models import Item, Rating
-from django.template import loader
+from .forms import ItemForm, CommentForm
+from .models import Item, Rating, Comment
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 
@@ -94,6 +91,33 @@ def submit_rating(request, pk):
     else:
         # Handle other HTTP methods if needed
         return HttpResponseNotAllowed(['POST'])
+
+
+@login_required
+def add_comment(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.item = item
+            comment.user = request.user
+            comment.save()
+            return redirect('food:detail', pk=pk)
+    else:
+        form = CommentForm()
+    return render(request, 'food/detail.html', {'item': item, 'comment_form': form})
+
+
+@login_required
+def delete_comment(request, item_pk, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk, item_id=item_pk)
+    if request.user == comment.user or request.user == comment.item.user_name:
+        comment.delete()
+        return redirect('food:detail', pk=item_pk)
+    else:
+        return HttpResponseForbidden("You are not authorized to delete this comment.")
+
 
 
 def handler404(request, exception):

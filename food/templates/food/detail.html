@@ -17,7 +17,13 @@
                     <a href="{% url 'food:update_item' item.id %}" class="btn btn-primary">Update</a>
                 {% endif %}
                 <h2>Rate this item:</h2>
-                {% ratings object %}
+                {% ratings item %}
+                <h2>Comments:</h2>
+                <form method="post" action="{% url 'food:add_comment' item.pk %}">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <button type="submit" class="btn btn-primary">Add Comment</button>
+                </form>
             {% endif %}
         </div>
     </div>
@@ -26,9 +32,37 @@
 <hr>
 
 <div class="container">
-
+    <div class="row">
+        <div class="col-md-6">
             <h3>Views Count</h3>
             <p>{{ item.views }}</p>
         </div>
+    </div>
+</div>
+
+
+<hr>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Comments:</h3>
+            {% for comment in item.comments.all %}
+                <p>{{ comment.user }}: {{ comment.content }}</p>
+                <p><small>{{ comment.created_at }}</small></p>
+                {% if user.is_authenticated %}
+                    {% if comment.user == user or item.user_name == user %}
+                        <form method="post" action="{% url 'food:delete_comment' item.pk comment.pk %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+                <hr>
+            {% empty %}
+                <p>No comments yet.</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {% endblock %}

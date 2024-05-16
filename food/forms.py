@@ -1,6 +1,6 @@
 from ckeditor.widgets import CKEditorWidget
 from django import forms
-from .models import Item
+from .models import Item, Comment
 
 
 class ItemForm(forms.ModelForm):
@@ -15,4 +15,13 @@ class ItemForm(forms.ModelForm):
             'item_name': 'Заглавие',
             'item_desc': 'Описание',
             'item_image': 'Снимка'
+        }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Add a comment...'}),
         }

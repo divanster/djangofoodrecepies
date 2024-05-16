@@ -18,6 +18,9 @@ urlpatterns = [
     path('delete/<int:item_id>/', views.delete_item, name='delete_item'),
     # rating
     path('<int:pk>/submit_rating/', views.submit_rating, name='submit_rating'),
+    # comments
+    path('<int:pk>/add_comment/', views.add_comment, name='add_comment'),
+    path('<int:item_pk>/delete_comment/<int:comment_pk>/', views.delete_comment, name='delete_comment'),
 
 
 

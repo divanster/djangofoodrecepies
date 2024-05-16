@@ -31,6 +31,16 @@ class Item(models.Model):
         return 0
 
 
+class Comment(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField(max_length=1000)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment by {self.user} on {self.item}'
+
+
 class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey('Item', on_delete=models.CASCADE)
