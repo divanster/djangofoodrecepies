@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'ckeditor',
     'star_ratings',
+    'rest_framework',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
