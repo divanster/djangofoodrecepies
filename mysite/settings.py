@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'star_ratings',
     'rest_framework',
+    'django_filters',
     'api',
 ]
 
