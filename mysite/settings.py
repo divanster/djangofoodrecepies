@@ -58,7 +58,6 @@ MIDDLEWARE = [
 CUSTOM_ERROR_HANDLER = 'food.views.handler404', 'food.views.handler500',
 
 ROOT_URLCONF = 'mysite.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
