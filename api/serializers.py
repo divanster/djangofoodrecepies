@@ -20,7 +20,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ItemSerializer(serializers.ModelSerializer):
-    user_name = UserSerializer(read_only=True)
+    user_name = serializers.ReadOnlyField(source='user_name.username')
+    get_average_rating = serializers.ReadOnlyField()
 
     class Meta:
         model = Item
@@ -28,7 +29,8 @@ class ItemSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = serializers.ReadOnlyField(source='user.username')
+    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all())
 
     class Meta:
         model = Comment
