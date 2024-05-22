@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseForbidden, JsonResponse, \
+    HttpResponseNotAllowed
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
@@ -8,7 +9,8 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ItemForm, CommentForm
 from .models import Item, Comment
-from star_ratings.models import Rating
+from star_ratings.models import Rating, UserRating
+from rest_framework.decorators import api_view
 
 
 class IndexClassView(ListView):
@@ -100,14 +102,39 @@ def delete_comment(request, item_pk, comment_pk):
         return HttpResponseForbidden("You are not authorized to delete this comment.")
 
 
+# def submit_rating(request, pk):
+#     if request.method == 'POST':
+#         item_id = request.POST.get('item_id')
+#         rating_value = request.POST.get('rating')
+#         item = get_object_or_404(Item, pk=item_id)
+#         # Create or update the rating
+#         Rating.objects.update_or_create(user=request.user, content_object=item, defaults={'score': rating_value})
+#         return redirect('food:detail', pk=pk)
+#     else:
+#         return HttpResponseNotAllowed(['POST'])
+
+
+@api_view(['POST'])
 def submit_rating(request, pk):
     if request.method == 'POST':
-        item_id = request.POST.get('item_id')
-        rating_value = request.POST.get('rating')
-        item = get_object_or_404(Item, pk=item_id)
-        # Create or update the rating
-        Rating.objects.update_or_create(user=request.user, content_object=item, defaults={'score': rating_value})
-        return redirect('food:detail', pk=pk)
+        try:
+            print(f"Received request to rate item with ID: {pk}")
+            item = get_object_or_404(Item, pk=pk)
+            rating_value = request.data.get('rating')
+            print(f"Rating value received: {rating_value}")
+            if rating_value is None:
+                return JsonResponse({'error': 'Rating value is required'}, status=400)
+
+            # Update or create the user rating
+            user_rating, created = UserRating.objects.update_or_create(
+                user=request.user,
+                rating=item.rating,
+                defaults={'score': rating_value}
+            )
+            return JsonResponse({'success': 'Rating submitted successfully'})
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            return JsonResponse({'error': str(e)}, status=500)
     else:
         return HttpResponseNotAllowed(['POST'])
 
