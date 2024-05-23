@@ -11,6 +11,14 @@ from .forms import ItemForm, CommentForm
 from .models import Item, Comment
 from star_ratings.models import Rating, UserRating
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from rest_framework.response import Response
+
+
+
+
 
 
 class IndexClassView(ListView):
@@ -92,14 +100,14 @@ class AddComment(LoginRequiredMixin, CreateView):
         return reverse_lazy('food:detail', kwargs={'pk': self.kwargs['pk']})
 
 
-@login_required
-def delete_comment(request, item_pk, comment_pk):
-    comment = get_object_or_404(Comment, pk=comment_pk, item_id=item_pk)
-    if request.user == comment.user or request.user == comment.item.user_name:
-        comment.delete()
-        return redirect('food:detail', pk=item_pk)
-    else:
-        return HttpResponseForbidden("You are not authorized to delete this comment.")
+# @login_required
+# def delete_comment(request, item_pk, comment_pk):
+#     comment = get_object_or_404(Comment, pk=comment_pk, item_id=item_pk)
+#     if request.user == comment.user or request.user == comment.item.user_name:
+#         comment.delete()
+#         return redirect('food:detail', pk=item_pk)
+#     else:
+#         return HttpResponseForbidden("You are not authorized to delete this comment.")
 
 
 # def submit_rating(request, pk):
@@ -113,17 +121,33 @@ def delete_comment(request, item_pk, comment_pk):
 #     else:
 #         return HttpResponseNotAllowed(['POST'])
 
+class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Comment
+    template_name = 'food/comment_confirm_delete.html'
+    context_object_name = 'comment'
 
-@api_view(['POST'])
-def submit_rating(request, pk):
-    if request.method == 'POST':
+    def get_success_url(self):
+        item_pk = self.kwargs['item_pk']
+        return reverse_lazy('food:detail', kwargs={'pk': item_pk})
+
+    def get_object(self, queryset=None):
+        comment = super().get_object(queryset)
+        if self.request.user != comment.user and self.request.user != comment.item.user_name:
+            raise HttpResponseForbidden("You are not authorized to delete this comment.")
+        return comment
+
+
+class SubmitRatingView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
         try:
             print(f"Received request to rate item with ID: {pk}")
             item = get_object_or_404(Item, pk=pk)
             rating_value = request.data.get('rating')
             print(f"Rating value received: {rating_value}")
             if rating_value is None:
-                return JsonResponse({'error': 'Rating value is required'}, status=400)
+                return Response({'error': 'Rating value is required'}, status=status.HTTP_400_BAD_REQUEST)
 
             # Update or create the user rating
             user_rating, created = UserRating.objects.update_or_create(
@@ -131,12 +155,34 @@ def submit_rating(request, pk):
                 rating=item.rating,
                 defaults={'score': rating_value}
             )
-            return JsonResponse({'success': 'Rating submitted successfully'})
+            return Response({'success': 'Rating submitted successfully'})
         except Exception as e:
             print(f"Error: {str(e)}")
-            return JsonResponse({'error': str(e)}, status=500)
-    else:
-        return HttpResponseNotAllowed(['POST'])
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# @api_view(['POST'])
+# def submit_rating(request, pk):
+#     if request.method == 'POST':
+#         try:
+#             print(f"Received request to rate item with ID: {pk}")
+#             item = get_object_or_404(Item, pk=pk)
+#             rating_value = request.data.get('rating')
+#             print(f"Rating value received: {rating_value}")
+#             if rating_value is None:
+#                 return JsonResponse({'error': 'Rating value is required'}, status=400)
+#
+#             # Update or create the user rating
+#             user_rating, created = UserRating.objects.update_or_create(
+#                 user=request.user,
+#                 rating=item.rating,
+#                 defaults={'score': rating_value}
+#             )
+#             return JsonResponse({'success': 'Rating submitted successfully'})
+#         except Exception as e:
+#             print(f"Error: {str(e)}")
+#             return JsonResponse({'error': str(e)}, status=500)
+#     else:
+#         return HttpResponseNotAllowed(['POST'])
 
 
 def handler404(request, exception):
