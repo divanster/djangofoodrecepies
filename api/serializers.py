@@ -35,3 +35,12 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'content', 'created_at', 'user', 'item']
+
+
+class RatingSerializer(serializers.Serializer):
+    rating = serializers.IntegerField()
+
+    def validate_rating(self, value):
+        if value < 1 or value > 5:
+            raise serializers.ValidationError("Rating must be between 1 and 5.")
+        return value

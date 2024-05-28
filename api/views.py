@@ -1,6 +1,8 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, permissions
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -10,6 +12,9 @@ from .serializers import ItemSerializer, CommentSerializer, UserSerializer
 from food.models import Item, Comment
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from .serializers import RatingSerializer
+from star_ratings.models import Rating, UserRating
+from django.contrib.contenttypes.models import ContentType
 
 
 class ApiRootView(View):
@@ -77,3 +82,37 @@ class LoginView(generics.GenericAPIView):
                 'access': str(refresh.access_token),
             })
         return Response({"error": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class RatingSubmitView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        logger.debug(f"Received rating submission for item {pk} with data: {request.data}")
+        serializer = RatingSerializer(data=request.data)
+        if serializer.is_valid():
+            rating_value = serializer.validated_data['rating']
+            try:
+                item = get_object_or_404(Item, pk=pk)
+                content_type = ContentType.objects.get_for_model(Item)
+                rating, _ = Rating.objects.get_or_create(
+                    content_type=content_type,
+                    object_id=item.id,
+                )
+                UserRating.objects.update_or_create(
+                    user=request.user,
+                    rating=rating,
+                    defaults={'score': rating_value}
+                )
+                logger.debug(f"Rating submitted successfully for item {pk}")
+                return Response({'success': 'Rating submitted successfully'})
+            except Exception as e:
+                logger.error(f"Error submitting rating for item {pk}: {str(e)}")
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        logger.error(f"Invalid rating data for item {pk}: {serializer.errors}")
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

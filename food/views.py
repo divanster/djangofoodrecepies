@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseForbidden, JsonResponse, \
     HttpResponseNotAllowed
 from django.shortcuts import render, get_object_or_404, redirect
@@ -15,10 +16,6 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
-
-
-
-
 
 
 class IndexClassView(ListView):
@@ -137,28 +134,37 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
         return comment
 
 
+def handle_rating_submission(user, pk, rating_value):
+    item = get_object_or_404(Item, pk=pk)
+    content_type = ContentType.objects.get_for_model(Item)
+
+    rating, created = Rating.objects.get_or_create(
+        content_type=content_type,
+        object_id=item.id,
+    )
+
+    user_rating, created = UserRating.objects.update_or_create(
+        user=user,
+        rating=rating,
+        defaults={'score': rating_value}
+    )
+    return {'success': 'Rating submitted successfully'}
+
+
 class SubmitRatingView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
         try:
-            print(f"Received request to rate item with ID: {pk}")
-            item = get_object_or_404(Item, pk=pk)
             rating_value = request.data.get('rating')
-            print(f"Rating value received: {rating_value}")
             if rating_value is None:
                 return Response({'error': 'Rating value is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Update or create the user rating
-            user_rating, created = UserRating.objects.update_or_create(
-                user=request.user,
-                rating=item.rating,
-                defaults={'score': rating_value}
-            )
-            return Response({'success': 'Rating submitted successfully'})
+            result = handle_rating_submission(request.user, pk, rating_value)
+            return Response(result)
         except Exception as e:
-            print(f"Error: {str(e)}")
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # @api_view(['POST'])
 # def submit_rating(request, pk):
