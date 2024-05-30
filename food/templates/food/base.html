@@ -21,6 +21,7 @@
                 <a class="nav-item mx-2" href="{% url 'food:index' %}">Рецепти</a>
                 <a class="nav-item mx-2" href="{% url 'food:create_item' %}">Добави рецепта</a>
                 <a class="nav-item mx-2" href="{% url 'profile' request.user.username %}">Профил</a>
+                <a class="nav-item mx-2" href="{% url 'schema-swagger-ui' %}" target="_blank">API Docs</a>
                 <a class="nav-item mx-2 btn btn-danger" href="{% url 'logout' %}">Logout</a>
             {% else %}
                 <a class="nav-item mx-2" href="{% url 'food:index' %}">Рецепти</a>
