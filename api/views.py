@@ -1,20 +1,22 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import generics, status, permissions
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.models import User
+import logging
 from django.contrib.auth import authenticate
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, status, permissions, filters
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from django.contrib.auth.models import User
 from django.views import View
 from django.http import JsonResponse
-from .serializers import ItemSerializer, CommentSerializer, UserSerializer
-from food.models import Item, Comment
-from rest_framework import filters
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import RatingSerializer
-from star_ratings.models import Rating, UserRating
 from django.contrib.contenttypes.models import ContentType
+from star_ratings.models import Rating, UserRating
+
+from .serializers import ItemSerializer, CommentSerializer, UserSerializer, RatingSerializer
+from food.models import Item, Comment
+
+logger = logging.getLogger(__name__)
 
 
 class ApiRootView(View):
@@ -82,11 +84,6 @@ class LoginView(generics.GenericAPIView):
                 'access': str(refresh.access_token),
             })
         return Response({"error": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
-
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 class RatingSubmitView(APIView):

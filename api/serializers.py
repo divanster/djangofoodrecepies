@@ -22,15 +22,20 @@ class UserSerializer(serializers.ModelSerializer):
 class ItemSerializer(serializers.ModelSerializer):
     user_name = serializers.ReadOnlyField(source='user_name.username')
     get_average_rating = serializers.ReadOnlyField()
+    comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
-        fields = ['id', 'item_name', 'item_desc', 'item_image', 'views', 'user_name', 'get_average_rating']
+        fields = ['id', 'item_name', 'item_desc', 'item_image', 'views', 'user_name', 'get_average_rating', 'comments']
+
+    def get_comments(self, obj):
+        comments = Comment.objects.filter(item=obj)
+        return CommentSerializer(comments, many=True).data
 
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
-    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all())
+    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), write_only=True)
 
     class Meta:
         model = Comment
