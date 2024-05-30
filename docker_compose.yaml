@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: ./foodapp
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./foodapp:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  react-native:
+    build:
+      context: ./webframework
+      dockerfile: Dockerfile
+    volumes:
+      - ./webframework:/code
+    ports:
+      - "8081:8081"
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: yourdbname
+      POSTGRES_USER: yourdbuser
+      POSTGRES_PASSWORD: yourdbpassword
+
+volumes:
+  postgres_data:
