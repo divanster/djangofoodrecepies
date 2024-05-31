@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'api',
     'corsheaders',
     'drf_yasg',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
