@@ -1,10 +1,10 @@
-# Django Food Recipes Project
+Django Food Recipes Project
 
-## Overview
+Overview
 
 This project is a web application for managing and sharing food recipes. It is built using Django for the backend and includes features for user authentication, recipe management, commenting, and rating. The project also includes a mobile app built with React Native.
 
-## Features
+Features
 
 - User registration and authentication
 - Recipe creation, update, and deletion
@@ -12,80 +12,93 @@ This project is a web application for managing and sharing food recipes. It is b
 - Profile management
 - Mobile app support with React Native
 
-## Project Structure
+Project Structure
 
 .
-├── .venv # Python virtual environment
-├── api # Django app for API endpoints
-│ ├── migrations
-│ ├── init.py
-│ ├── admin.py
-│ ├── apps.py
-│ ├── models.py
-│ ├── serializers.py
-│ ├── tests.py
-│ ├── urls.py
-│ └── views.py
-├── food # Django app for managing food recipes
-│ ├── migrations
-│ ├── static
-│ ├── templates
-│ │ ├── django_filters
-│ │ └── food
-│ ├── init.py
-│ ├── admin.py
-│ ├── apps.py
-│ ├── errors.py
-│ ├── forms.py
-│ ├── models.py
-│ ├── tests.py
-│ ├── urls.py
-│ └── views.py
-├── mysite # Project settings and configurations
-│ ├── init.py
-│ ├── asgi.py
-│ ├── settings.py
-│ ├── urls.py
-│ └── wsgi.py
-├── pictures # Static images
-│ └── profile_pictures
-│ └── profilepic.jpg
-├── users # Django app for user management
-│ ├── migrations
-│ ├── templates
-│ │ └── users
-│ ├── init.py
-│ ├── admin.py
-│ ├── apps.py
-│ ├── forms.py
-│ ├── models.py
-│ ├── signals.py
-│ ├── tests.py
-│ └── views.py
-├── .dockerignore # Files to ignore in Docker builds
-├── .gitignore # Files to ignore in Git
-├── db.sqlite3 # SQLite database
-├── docker-compose.yml # Docker Compose configuration
-├── docker_compose.yaml # Alternative Docker Compose configuration
-├── Dockerfile # Docker configuration
-├── manage.py # Django management script
-├── myapp_models.png # Database diagram
-├── package-lock.json # NPM package lock file
-├── requirements.txt # Python dependencies
+.
+├── .dockerignore
+├── .gitignore
+├── Dockerfile
+├── README.md
+├── api
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations
+│   │   └── __init__.py
+│   ├── models.py
+│   ├── serializers.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── db.sqlite3
+├── docker-compose.yml
+├── food
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── errors.py
+│   ├── forms.py
+│   ├── migrations
+│   │   └── __init__.py
+│   ├── models.py
+│   ├── static
+│   ├── templates
+│   │   ├── django_filters
+│   │   └── food
+│   │       ├── 404.html
+│   │       ├── 500.html
+│   │       ├── base.html
+│   │       ├── detail.html
+│   │       ├── index.html
+│   │       ├── item-delete.html
+│   │       └── item-form.html
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── manage.py
+├── myapp_models.png
+├── mysite
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── package-lock.json
+├── pictures
+│   └── profile_pictures
+│       └── profilepic.jpg
+├── requirements.txt
+└── users
+    ├── __init__.py
+    ├── admin.py
+    ├── apps.py
+    ├── forms.py
+    ├── migrations
+    │   └── __init__.py
+    ├── models.py
+    ├── signals.py
+    ├── templates
+    │   └── users
+    │       ├── login.html
+    │       ├── logout.html
+    │       ├── profile.html
+    │       └── register.html
+    ├── tests.py
+    └── views.py
 
-markdown
 
 
-## Setup and Installation
 
-### Prerequisites
+Setup and Installation
+Prerequisites
 
 - Python 3.12
 - Node.js
 - Docker
 - PostgreSQL (for production)
 
-### Backend Setup
+Backend Setup
 
 1. **Clone the repository:**
    ```bash
