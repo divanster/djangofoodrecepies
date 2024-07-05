@@ -1,3 +1,4 @@
+<!-- users/templates/users/register.html -->
 {% extends 'food/base.html' %}
 {% load static %}
 
@@ -19,6 +20,9 @@
                             <label for="{{ field.id_for_label }}" class="col-sm-3 col-form-label">{{ field.label }}</label>
                             <div class="col-sm-6">
                                 {{ field }}
+                                <div class="text-danger">
+                                    {{ field.errors }}
+                                </div>
                             </div>
                         </div>
                         {% endfor %}

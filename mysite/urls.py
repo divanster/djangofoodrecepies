@@ -31,10 +31,10 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     path('profile/<str:username>/', user_views.ProfilePageView.as_view(), name='profile'),
-    path('', RedirectView.as_view(url='food/', permanent=False)),
     path('ratings/', include('star_ratings.urls', namespace='ratings')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('', RedirectView.as_view(url='food/', permanent=False)),  # Ensure this is last to avoid conflicts
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = 'food.views.handler404'
